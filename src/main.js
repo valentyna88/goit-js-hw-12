@@ -72,13 +72,13 @@ async function onLoadMore() {
     const data = await fetchImages(query, currentPage);
     renderImages(data.hits);
     lightbox.refresh();
+
     const totalLoadedImages = currentPage * 15;
     if (totalLoadedImages >= data.totalHits) {
       loadMoreBtnEl.classList.add('is-hidden');
       iziToast.info({
         title: 'End of Results',
-        message:
-          'We are sorry, but you have reached the end of search results.',
+        message: "We're sorry, but you've reached the end of search results.",
       });
     } else {
       loadMoreBtnEl.classList.remove('is-hidden');
