@@ -41,14 +41,14 @@ async function onSearch(event) {
           'Sorry, there are no images matching your search query. Please try again!',
       });
     } else {
-      renderImages(data.hits, galleryEl);
+      renderImages(data.hits);
       if (lightbox) {
         lightbox.refresh();
       } else {
         lightbox = new SimpleLightbox('.gallery a');
       }
 
-      if (data.totalHits > currentPage * 15) {
+      if (data.totalHits > 15) {
         loadMoreBtnEl.classList.remove('is-hidden');
       }
     }
@@ -70,10 +70,17 @@ async function onLoadMore() {
 
   try {
     const data = await fetchImages(query, currentPage);
-    renderImages(data.hits, galleryEl);
+    renderImages(data.hits);
     lightbox.refresh();
-
-    if (data.totalHits > currentPage * 15) {
+    const totalLoadedImages = currentPage * 15;
+    if (totalLoadedImages >= data.totalHits) {
+      loadMoreBtnEl.classList.add('is-hidden');
+      iziToast.info({
+        title: 'End of Results',
+        message:
+          'We are sorry, but you have reached the end of search results.',
+      });
+    } else {
       loadMoreBtnEl.classList.remove('is-hidden');
     }
   } catch (error) {
