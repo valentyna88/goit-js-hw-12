@@ -4,7 +4,7 @@ import { fetchImages } from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 
 const searchFormEl = document.querySelector('.js-search-form');
-const gallery = document.querySelector('.js-gallery');
+const galleryEl = document.querySelector('.js-gallery');
 const loadMoreBtnEl = document.querySelector('.load-more-btn');
 const loader = document.querySelector('.loader');
 
@@ -17,7 +17,7 @@ loadMoreBtnEl.addEventListener('click', onLoadMore);
 
 async function onSearch(event) {
   event.preventDefault();
-  const query = event.target.elements.user_query.value.trim();
+  query = event.target.elements.user_query.value.trim();
 
   if (query === '') {
     iziToast.error({
@@ -26,9 +26,9 @@ async function onSearch(event) {
     });
     return;
   }
-  currentPage = 1;
-  gallery.innerHTML = '';
 
+  currentPage = 1;
+  galleryEl.innerHTML = '';
   loadMoreBtnEl.classList.add('is-hidden');
   loader.classList.remove('is-hidden');
 
@@ -41,12 +41,13 @@ async function onSearch(event) {
           'Sorry, there are no images matching your search query. Please try again!',
       });
     } else {
-      renderImages(data.hits);
+      renderImages(data.hits, galleryEl);
       if (lightbox) {
         lightbox.refresh();
       } else {
         lightbox = new SimpleLightbox('.gallery a');
       }
+
       if (data.totalHits > currentPage * 15) {
         loadMoreBtnEl.classList.remove('is-hidden');
       }
@@ -69,8 +70,9 @@ async function onLoadMore() {
 
   try {
     const data = await fetchImages(query, currentPage);
-    renderImages(data.hits);
+    renderImages(data.hits, galleryEl);
     lightbox.refresh();
+
     if (data.totalHits > currentPage * 15) {
       loadMoreBtnEl.classList.remove('is-hidden');
     }
