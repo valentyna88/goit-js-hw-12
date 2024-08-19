@@ -61,3 +61,25 @@ async function onSearch(event) {
     event.target.reset();
   }
 }
+
+async function onLoadMore() {
+  currentPage += 1;
+  loader.classList.remove('is-hidden');
+  loadMoreBtnEl.classList.add('is-hidden');
+
+  try {
+    const data = await fetchImages(query, currentPage);
+    renderImages(data.hits);
+    lightbox.refresh();
+    if (data.totalHits > currentPage * 15) {
+      loadMoreBtnEl.classList.remove('is-hidden');
+    }
+  } catch (error) {
+    iziToast.error({
+      title: 'Error',
+      message: 'Failed to fetch images. Please try again later.',
+    });
+  } finally {
+    loader.classList.add('is-hidden');
+  }
+}
