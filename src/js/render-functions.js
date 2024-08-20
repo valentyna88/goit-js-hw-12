@@ -1,4 +1,7 @@
 export function renderImages(images) {
+  const gallery = document.querySelector('.js-gallery');
+  gallery.innerHTML = '';
+
   const galleryMarkup = images
     .map(
       ({
@@ -40,5 +43,5 @@ export function renderImages(images) {
   `
     )
     .join('');
-  galleryEl.insertAdjacentHTML('beforeend', galleryMarkup);
+  gallery.innerHTML = galleryMarkup;
 }
