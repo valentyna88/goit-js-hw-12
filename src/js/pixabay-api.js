@@ -1,6 +1,8 @@
+import axios from 'axios';
+
 const BASE_URL = 'https://pixabay.com/api/';
 
-export function fetchImages(searchedQuery) {
+export const fetchImages = searchedQuery => {
   const params = new URLSearchParams({
     q: searchedQuery,
     image_type: 'photo',
@@ -16,4 +18,4 @@ export function fetchImages(searchedQuery) {
     }
     return response.json();
   });
-}
+};
