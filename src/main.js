@@ -4,8 +4,9 @@ import { fetchImages } from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 
 const searchFormEl = document.querySelector('.js-search-form');
+const gallery = document.querySelector('.js-gallery');
 const loader = document.querySelector('.loader');
-let lightbox;
+let lightbox = new SimpleLightbox('.js-gallery a');
 
 const onSearchFormSubmit = event => {
   event.preventDefault();
@@ -14,8 +15,7 @@ const onSearchFormSubmit = event => {
 
   if (searchedValue === '') {
     iziToast.error({
-      title: 'Error',
-      message: 'Please enter a search term.',
+      message: 'Please enter a search query!',
       position: 'topRight',
     });
     return;
@@ -31,20 +31,19 @@ const onSearchFormSubmit = event => {
             'Sorry, there are no images matching your search query. Please try again!',
           position: 'topRight',
         });
-      } else {
-        renderImages(data.hits);
-        if (lightbox) {
-          lightbox.refresh();
-        } else {
-          lightbox = new SimpleLightbox('.js-gallery a');
-        }
+        gallery.innerHTML = '';
+        return;
       }
+
+      const galleryMarkup = renderImages(data.hits);
+      gallery.innerHTML = galleryMarkup;
+      lightbox.refresh();
     })
     .catch(error => {
       console.error(error);
       iziToast.error({
-        title: 'Error',
         message: 'Failed to fetch images. Please try again later.',
+        position: 'topRight',
       });
     })
     .finally(() => {
@@ -52,4 +51,5 @@ const onSearchFormSubmit = event => {
       searchFormEl.reset();
     });
 };
+
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
