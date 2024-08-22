@@ -1,8 +1,5 @@
-export function renderImages(images) {
-  const gallery = document.querySelector('.js-gallery');
-  gallery.innerHTML = '';
-
-  const galleryMarkup = images
+export const renderImages = images => {
+  return images
     .map(
       ({
         largeImageURL,
@@ -43,5 +40,4 @@ export function renderImages(images) {
   `
     )
     .join('');
-  gallery.innerHTML = galleryMarkup;
-}
+};
