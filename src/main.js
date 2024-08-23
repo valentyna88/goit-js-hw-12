@@ -15,6 +15,8 @@ let lightbox = new SimpleLightbox('.js-gallery a');
 // Глобальні змінні для зберігання пошукового запиту та поточної сторінки
 let searchedValue = '';
 let page = 1;
+let totalHits = 0; // Додаємо змінну для зберігання загальної кількості зображень
+const perPage = 15; // Кількість зображень на сторінку
 
 // Функції для керування видимістю завантажувача та кнопки "Load more"
 const showLoader = () => loader.classList.remove('is-hidden');
@@ -37,16 +39,28 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
       return false;
     }
 
-    const galleryMarkup = renderImages(response.data.hits);
     if (isNewSearch) {
-      gallery.innerHTML = galleryMarkup;
+      totalHits = response.data.totalHits; // Оновлюємо загальну кількість зображень при новому пошуку
+      gallery.innerHTML = renderImages(response.data.hits);
     } else {
-      gallery.insertAdjacentHTML('beforeend', galleryMarkup);
+      gallery.insertAdjacentHTML('beforeend', renderImages(response.data.hits));
     }
 
     page += 1;
     lightbox.refresh();
-    showLoadBtn();
+
+    // Перевіряємо, чи досягнуто кінця колекції
+    const totalPages = Math.ceil(totalHits / perPage);
+    if (page > totalPages) {
+      hideLoadBtn();
+      iziToast.info({
+        message: "We're sorry, but you've reached the end of search results.",
+        position: 'topRight',
+      });
+    } else {
+      showLoadBtn();
+    }
+
     return true;
   } catch (error) {
     console.error(error);
@@ -79,7 +93,7 @@ const onSearchFormSubmit = async event => {
   hideLoadBtn();
 
   const success = await fetchAndRenderImages(true);
-  searchFormEl.reset();
+  searchFormEl.reset(); // Скидання форми незалежно від результату
 };
 
 // Обробник події кліку по кнопці "Load more"
