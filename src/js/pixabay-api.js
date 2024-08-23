@@ -15,5 +15,5 @@ export const fetchImages = (searchedQuery, page) => {
     },
   };
 
-  return axios.get(``, axiosOptions);
+  return axios.get('', axiosOptions);
 };
