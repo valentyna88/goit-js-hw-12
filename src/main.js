@@ -8,12 +8,17 @@ const gallery = document.querySelector('.js-gallery');
 const loader = document.querySelector('.loader');
 const loadBtn = document.querySelector('.load-btn');
 let lightbox = new SimpleLightbox('.js-gallery a');
-let searchedValue = ''; // Глобальная переменная для хранения поискового запроса
-let page = 1; // Глобальная переменная для хранения текущей страницы
+let searchedValue = '';
+let page = 1;
+
+const showLoader = () => loader.classList.remove('is-hidden');
+const hideLoader = () => loader.classList.add('is-hidden');
+const showLoadBtn = () => loadBtn.classList.remove('is-hidden');
+const hideLoadBtn = () => loadBtn.classList.add('is-hidden');
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  page = 1; // Сброс страницы на 1 при новом поисковом запросе
+  page = 1;
 
   searchedValue = searchFormEl.elements.user_query.value.trim();
 
@@ -25,8 +30,8 @@ const onSearchFormSubmit = async event => {
     return;
   }
 
-  loader.classList.remove('is-hidden');
-  loadBtn.classList.add('is-hidden'); // Прячем кнопку перед новым поиском
+  showLoader();
+  hideLoadBtn();
 
   try {
     const response = await fetchImages(searchedValue, page);
@@ -46,7 +51,8 @@ const onSearchFormSubmit = async event => {
 
     page += 1;
     lightbox.refresh();
-    loadBtn.classList.remove('is-hidden'); // Показываем кнопку, если есть результаты
+
+    showLoadBtn();
   } catch (error) {
     console.error(error);
     iziToast.error({
@@ -54,14 +60,14 @@ const onSearchFormSubmit = async event => {
       position: 'topRight',
     });
   } finally {
-    loader.classList.add('is-hidden');
+    hideLoader();
     searchFormEl.reset();
   }
 };
 
 const onLoadMoreClick = async () => {
-  loader.classList.remove('is-hidden');
-  loadBtn.classList.add('is-hidden'); // Прячем кнопку во время загрузки
+  showLoader();
+  hideLoadBtn();
 
   try {
     const response = await fetchImages(searchedValue, page);
@@ -71,7 +77,8 @@ const onLoadMoreClick = async () => {
 
     page += 1;
     lightbox.refresh();
-    loadBtn.classList.remove('is-hidden'); // Показываем кнопку после загрузки
+
+    showLoadBtn();
   } catch (error) {
     console.error(error);
     iziToast.error({
@@ -79,7 +86,7 @@ const onLoadMoreClick = async () => {
       position: 'topRight',
     });
   } finally {
-    loader.classList.add('is-hidden');
+    hideLoader();
   }
 };
 
