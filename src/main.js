@@ -6,12 +6,16 @@ import { renderImages } from './js/render-functions';
 const searchFormEl = document.querySelector('.js-search-form');
 const gallery = document.querySelector('.js-gallery');
 const loader = document.querySelector('.loader');
+const loadBtn = document.querySelector('.load-btn');
 let lightbox = new SimpleLightbox('.js-gallery a');
+let searchedValue = ''; // Глобальная переменная для хранения поискового запроса
+let page = 1; // Глобальная переменная для хранения текущей страницы
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
+  page = 1; // Сброс страницы на 1 при новом поисковом запросе
 
-  const searchedValue = searchFormEl.elements.user_query.value.trim();
+  searchedValue = searchFormEl.elements.user_query.value.trim();
 
   if (searchedValue === '') {
     iziToast.error({
@@ -22,9 +26,10 @@ const onSearchFormSubmit = async event => {
   }
 
   loader.classList.remove('is-hidden');
+  loadBtn.classList.add('is-hidden'); // Прячем кнопку перед новым поиском
 
   try {
-    const response = await fetchImages(searchedValue);
+    const response = await fetchImages(searchedValue, page);
 
     if (response.data.hits.length === 0) {
       iziToast.error({
@@ -38,7 +43,10 @@ const onSearchFormSubmit = async event => {
 
     const galleryMarkup = renderImages(response.data.hits);
     gallery.innerHTML = galleryMarkup;
+
+    page += 1;
     lightbox.refresh();
+    loadBtn.classList.remove('is-hidden'); // Показываем кнопку, если есть результаты
   } catch (error) {
     console.error(error);
     iziToast.error({
@@ -51,4 +59,29 @@ const onSearchFormSubmit = async event => {
   }
 };
 
+const onLoadMoreClick = async () => {
+  loader.classList.remove('is-hidden');
+  loadBtn.classList.add('is-hidden'); // Прячем кнопку во время загрузки
+
+  try {
+    const response = await fetchImages(searchedValue, page);
+
+    const galleryMarkup = renderImages(response.data.hits);
+    gallery.insertAdjacentHTML('beforeend', galleryMarkup);
+
+    page += 1;
+    lightbox.refresh();
+    loadBtn.classList.remove('is-hidden'); // Показываем кнопку после загрузки
+  } catch (error) {
+    console.error(error);
+    iziToast.error({
+      message: 'Failed to fetch more images. Please try again later.',
+      position: 'topRight',
+    });
+  } finally {
+    loader.classList.add('is-hidden');
+  }
+};
+
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
+loadBtn.addEventListener('click', onLoadMoreClick);
