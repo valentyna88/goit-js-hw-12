@@ -3,28 +3,40 @@ import SimpleLightbox from 'simplelightbox';
 import { fetchImages } from './js/pixabay-api';
 import { renderImages } from './js/render-functions';
 
-// Отримуємо посилання на елементи DOM
+// Получаем ссылки на элементы DOM
 const searchFormEl = document.querySelector('.js-search-form');
 const gallery = document.querySelector('.js-gallery');
 const loader = document.querySelector('.loader');
 const loadBtn = document.querySelector('.load-btn');
 
-// Ініціалізація SimpleLightbox для галереї
+// Инициализация SimpleLightbox для галереи
 let lightbox = new SimpleLightbox('.js-gallery a');
 
-// Глобальні змінні для зберігання пошукового запиту та поточної сторінки
+// Глобальные переменные для хранения поискового запроса и текущей страницы
 let searchedValue = '';
 let page = 1;
-let totalHits = 0; // Додаємо змінну для зберігання загальної кількості зображень
-const perPage = 15; // Кількість зображень на сторінку
+let totalHits = 0; // Переменная для хранения общего количества изображений
+const perPage = 15; // Количество изображений на страницу
 
-// Функції для керування видимістю завантажувача та кнопки "Load more"
+// Функции для управления видимостью загрузчика и кнопки "Load more"
 const showLoader = () => loader.classList.remove('is-hidden');
 const hideLoader = () => loader.classList.add('is-hidden');
 const showLoadBtn = () => loadBtn.classList.remove('is-hidden');
 const hideLoadBtn = () => loadBtn.classList.add('is-hidden');
 
-// Функція для обробки запитів до API та рендерингу зображень
+// Функция для плавного прокручивания страницы
+const smoothScroll = () => {
+  const { height: cardHeight } = document
+    .querySelector('.gallery-item')
+    .getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+};
+
+// Функция для обработки запросов к API и рендеринга изображений
 const fetchAndRenderImages = async (isNewSearch = false) => {
   try {
     const response = await fetchImages(searchedValue, page);
@@ -40,7 +52,7 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
     }
 
     if (isNewSearch) {
-      totalHits = response.data.totalHits; // Оновлюємо загальну кількість зображень при новому пошуку
+      totalHits = response.data.totalHits; // Обновляем общее количество изображений при новом поиске
       gallery.innerHTML = renderImages(response.data.hits);
     } else {
       gallery.insertAdjacentHTML('beforeend', renderImages(response.data.hits));
@@ -49,9 +61,9 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
     page += 1;
     lightbox.refresh();
 
-    // Перевіряємо, чи досягнуто кінця колекції
+    // Проверяем, достигнут ли конец коллекции
     const totalPages = Math.ceil(totalHits / perPage);
-    if (page > totalPages) {
+    if (page > totalPages || response.data.hits.length < perPage) {
       hideLoadBtn();
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
@@ -59,6 +71,11 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
       });
     } else {
       showLoadBtn();
+    }
+
+    // Добавляем вызов функции плавного прокручивания
+    if (!isNewSearch) {
+      smoothScroll();
     }
 
     return true;
@@ -74,10 +91,10 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
   }
 };
 
-// Обробник події відправки форми пошуку
+// Обработчик события отправки формы поиска
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  page = 1; // Скидання сторінки на 1 при новому пошуковому запиті
+  page = 1; // Сброс страницы на 1 при новом поисковом запросе
 
   searchedValue = searchFormEl.elements.user_query.value.trim();
 
@@ -88,22 +105,19 @@ const onSearchFormSubmit = async event => {
     });
     return;
   }
-
   showLoader();
   hideLoadBtn();
-
   const success = await fetchAndRenderImages(true);
-  searchFormEl.reset(); // Скидання форми незалежно від результату
+  searchFormEl.reset(); // Сброс формы независимо от результата
 };
 
-// Обробник події кліку по кнопці "Load more"
+// Обработчик события клика по кнопке "Load more"
 const onLoadMoreClick = async () => {
   showLoader();
   hideLoadBtn();
-
   await fetchAndRenderImages();
 };
 
-// Додаємо обробники подій для форми пошуку та кнопки "Load more"
+// Добавляем обработчики событий для формы поиска и кнопки "Load more"
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
 loadBtn.addEventListener('click', onLoadMoreClick);
