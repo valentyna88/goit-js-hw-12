@@ -2,7 +2,7 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://pixabay.com/api/';
 
-export const fetchImages = searchedQuery => {
+export const fetchImages = (searchedQuery, page) => {
   const axiosOptions = {
     params: {
       q: searchedQuery,
@@ -11,7 +11,7 @@ export const fetchImages = searchedQuery => {
       safesearch: true,
       per_page: 15,
       key: '45452240-d9bf2a206a145f9e2645b735d',
-      page: 1,
+      page: page,
     },
   };
 
