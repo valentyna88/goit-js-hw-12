@@ -59,7 +59,7 @@ button:active {
   flex-wrap: wrap;
   gap: 24px;
   max-width: 1134px;
-  margin: 0 auto;
+  margin: 0 auto 32px;
   justify-content: center;
 }
 
