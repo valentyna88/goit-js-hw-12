@@ -51,8 +51,7 @@ button:active {
 }
 
 .load-btn {
-  margin: 0 auto;
-  max-width: 1134px;
+  margin: 32px auto;
 }
 
 .gallery {
@@ -109,7 +108,8 @@ button:active {
   margin-right: auto;
 }
 
-.loader.is-hidden {
+.loader.is-hidden,
+.load-btn.is-hidden {
   display: none;
 }
 
