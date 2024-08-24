@@ -5,8 +5,8 @@ import { renderImages } from './js/render-functions';
 
 const searchFormEl = document.querySelector('.js-search-form');
 const gallery = document.querySelector('.js-gallery');
-const loader = document.querySelector('.loader');
-const loadBtn = document.querySelector('.load-btn');
+const loader = document.querySelector('.js-loader');
+const loadBtn = document.querySelector('.js-load-btn');
 
 let lightbox = new SimpleLightbox('.js-gallery a');
 
@@ -53,7 +53,7 @@ const fetchAndRenderImages = async (isNewSearch = false) => {
       gallery.insertAdjacentHTML('beforeend', renderImages(response.data.hits));
     }
 
-    page += 1;
+    page++;
     lightbox.refresh();
 
     const totalPages = Math.ceil(totalHits / perPage);
