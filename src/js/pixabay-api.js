@@ -9,9 +9,9 @@ export const fetchImages = (searchedQuery, page) => {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
+      page: page,
       per_page: 15,
       key: '45452240-d9bf2a206a145f9e2645b735d',
-      page,
     },
   };
 
