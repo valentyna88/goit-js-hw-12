@@ -107,13 +107,10 @@ button:active {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  position: relative;
   border: 3px solid;
-  border-color: #4e75ff #45d3ef transparent transparent;
-  box-sizing: border-box;
+  border-color: #005bbb #005bbb #f7e300 #f7e300;
   animation: rotation 1s linear infinite;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 40px auto;
 }
 
 .loader.is-hidden,
@@ -132,19 +129,17 @@ button:active {
   bottom: 0;
   margin: auto;
   border: 3px solid;
-  border-color: transparent transparent #ff3d00 #ff3d00;
+  border-color: transparent transparent #005bbb #005bbb;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  box-sizing: border-box;
   animation: rotationBack 0.5s linear infinite;
-  transform-origin: center center;
 }
 
 .loader::before {
   width: 32px;
   height: 32px;
-  border-color: #fff #fff transparent transparent;
+  border-color: #f7e300 #f7e300 transparent transparent;
   animation: rotation 1.5s linear infinite;
 }
 
@@ -156,6 +151,7 @@ button:active {
     transform: rotate(360deg);
   }
 }
+
 @keyframes rotationBack {
   0% {
     transform: rotate(0deg);
