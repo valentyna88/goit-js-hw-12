@@ -60,9 +60,9 @@ const onSearchFormSubmit = async event => {
 
     loader.classList.remove('is-hidden');
 
-    const response = await fetchImages(searchedValue, currentPage);
+    const data = await fetchImages(searchedValue, currentPage);
 
-    if (response.data.hits.length === 0) {
+    if (data.hits.length === 0) {
       iziToast.error({
         message:
           'Sorry, there are no images matching your search query. Please try again!',
@@ -76,10 +76,14 @@ const onSearchFormSubmit = async event => {
     }
 
     galleryEl.innerHTML = '';
-    renderGallery(response.data.hits);
-    checkEndOfResults(response.data.totalHits);
+    renderGallery(data.hits);
+    checkEndOfResults(data.totalHits);
   } catch (err) {
-    console.error(err);
+    iziToast.error({
+      message:
+        'An error occurred while fetching images. Please try again later.',
+      position: 'topRight',
+    });
   } finally {
     loader.classList.add('is-hidden');
   }
@@ -89,17 +93,21 @@ const onLoadMoreBtnClick = async () => {
   try {
     currentPage++;
 
-    const response = await fetchImages(searchedValue, currentPage);
-    renderGallery(response.data.hits);
+    const data = await fetchImages(searchedValue, currentPage);
+    renderGallery(data.hits);
 
     window.scrollBy({
       top: cardHeight * 2,
       behavior: 'smooth',
     });
 
-    checkEndOfResults(response.data.totalHits);
+    checkEndOfResults(data.totalHits);
   } catch (error) {
-    console.error(error);
+    iziToast.error({
+      message:
+        'An error occurred while loading more images. Please try again later.',
+      position: 'topRight',
+    });
   }
 };
 
