@@ -4,7 +4,13 @@
 
 body {
   font-family: 'Montserrat', sans-serif;
-  background-color: #fff;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
+  line-height: 1.33;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
 }
 
 h1,
